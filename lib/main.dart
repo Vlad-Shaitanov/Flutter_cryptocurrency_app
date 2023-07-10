@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -41,13 +42,19 @@ class CryptoCurrenciesListApp extends StatelessWidget {
           )
         ),
       ),
-      home: const MyHomePage(title: 'Crypto currency list'), // Поле задает главную страницу приложения
+      // Навигация в приложении
+      routes: {
+        "/coin": (context) => const CryptoCoinScreen(),
+        "/": (context) => const CryptoListScreen(title: "Crypto currency list"), // Дефолтный роут(главная страница приложения)
+      },
+      // home: const CryptoListScreen(title: 'Crypto currency list'), // Использовать, если нет поля routes
+
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class CryptoListScreen extends StatefulWidget {
+  const CryptoListScreen({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -61,23 +68,10 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<CryptoListScreen> createState() => _CryptoListScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  void _decrementCounter() {
-    setState(() {
-      _counter--;
-    });
-  }
+class _CryptoListScreenState extends State<CryptoListScreen> {
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       // backgroundColor: Colors.cyanAccent,
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
+        // Here we take the value from the CryptoListScreen object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
         leading: const Icon(Icons.arrow_back, color: Colors.white,),
@@ -95,24 +89,63 @@ class _MyHomePageState extends State<MyHomePage> {
 
           itemCount: 15, // Сколько будет элементов в списке
           separatorBuilder: (context, index) => const Divider(),
-          itemBuilder: (context , i) => ListTile(
-            leading: SvgPicture.asset('assets/svg/bitcoin-logo.svg', height: 30, width: 30,), // Иконка в начале элемента списка
-            trailing: const Icon(Icons.arrow_forward_ios), // Иконка в конце элемента списка
-            title: Text("Bitcoin",
-              style: theme.textTheme.bodyMedium, // Используем стили из общей темы
-              //В данном случае тема приложения зарегистрирована в контексте и доступна во всем дереве приложения
-            ),
-            subtitle: Text("20000\$",
-              style: theme.textTheme.labelSmall
-            ),
-          )
+          itemBuilder: (context , i) {
+            const coinName = "Bitcoin";
+
+            return ListTile(
+              leading: SvgPicture.asset('assets/svg/bitcoin-logo.svg', height: 30, width: 30,), // Иконка в начале элемента списка
+              trailing: const Icon(Icons.arrow_forward_ios), // Иконка в конце элемента списка
+              onTap: () {
+                // Коллбэк, вызываемый при нажатии на элемент списка
+                // Навигатор принимает контекст и открывает нужный экран по роуту(Навигация)
+                Navigator.of(context).pushNamed("/coin",
+                  arguments: coinName, // Передача аргументов в виджет, который находится на роуте
+                );
+              },
+              title: Text(coinName,
+                style: theme.textTheme.bodyMedium, // Используем стили из общей темы
+                //В данном случае тема приложения зарегистрирована в контексте и доступна во всем дереве приложения
+              ),
+              subtitle: Text("20000\$",
+                  style: theme.textTheme.labelSmall
+              ),
+            );
+          },
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _incrementCounter,
-      //   tooltip: 'Increment',
-      //   child: const Icon(Icons.add),
-      // ),
-      // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+
+class CryptoCoinScreen extends StatefulWidget {
+  const CryptoCoinScreen({Key? key}) : super(key: key);
+
+  @override
+  State<CryptoCoinScreen> createState() => _CryptoCoinScreenState();
+}
+
+class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
+  String? coinName;
+
+  @override
+  void didChangeDependencies(){ // Метод жизненного цикла
+    // Вытаскиваем аргументы, переданные при переходе по роуту "/coin"
+    final args = ModalRoute.of(context)?.settings.arguments; // Может быть null, поэтому опц.последовательность
+    // Проверка на то, переданы ли аргументы и верен ли их формат
+    assert(args != null && args is String, "You must provide args!");
+    log('isOk');
+
+    coinName = args as String;
+    setState(() {}); //Чтобы обновить экран после получения нового заголовка
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title:  Text(coinName ?? "..."),
+      ),
     );
   }
 }
