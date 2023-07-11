@@ -1,4 +1,6 @@
 import 'dart:developer';
+import 'package:crypto_coins_list/repositories/crypto_coins/crypto_coins_repository.dart';
+import 'package:crypto_coins_list/repositories/models/crypto_coin.dart';
 import 'package:flutter/material.dart';
 import 'package:crypto_coins_list/features/crypto_list/widgets/widgets.dart';
 
@@ -21,28 +23,50 @@ class CryptoListScreen extends StatefulWidget {
 }
 
 class _CryptoListScreenState extends State<CryptoListScreen> {
+  List<CryptoCoin>? _cryptoCoinsList;
+
+  @override
+  void initState() {
+    _loadCryptoCoins();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       // backgroundColor: Colors.cyanAccent,
       appBar: AppBar(
         // Here we take the value from the CryptoListScreen object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
-        leading: const Icon(Icons.arrow_back, color: Colors.white,),
+        leading: const Icon(
+          Icons.arrow_back,
+          color: Colors.white,
+        ),
       ),
-      body: ListView.separated(
+      body: _cryptoCoinsList == null
+          ? const Center(
+              child:
+                  CircularProgressIndicator()) // Если данных нет, выводим лоадер, иначе список
+          : ListView.separated(
+              padding: const EdgeInsets.only(top: 16),
+              itemCount:
+                  _cryptoCoinsList!.length, // Сколько будет элементов в списке
+              separatorBuilder: (context, index) => const Divider(),
+              itemBuilder: (context, i) {
+                final coin = _cryptoCoinsList![i];
 
-        itemCount: 15, // Сколько будет элементов в списке
-        separatorBuilder: (context, index) => const Divider(),
-        itemBuilder: (context , i) {
-          const coinName = "Bitcoin";
-
-          return const CryptoCoinTile(coinName: coinName);
-        },
-      ),
+                return CryptoCoinTile(coin: coin);
+              },
+            ),
     );
   }
+
+  // Приватная функция
+  Future<void> _loadCryptoCoins() async => {
+        // По нажатию на кнопку делаем запрос на валюты и записываем в приватную переменную
+        _cryptoCoinsList = await CryptoCoinsRepository().getCoinsList(),
+        // Обновляем стейт для отрисовки новых данных
+        setState(() {})
+      };
 }

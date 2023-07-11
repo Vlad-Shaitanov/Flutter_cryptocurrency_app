@@ -7,6 +7,8 @@ final darkTheme = ThemeData(
   primarySwatch: Colors.yellow, // Дефолтный цвет, если он не задан для каких-то элементов
   listTileTheme: const ListTileThemeData(iconColor: Colors.white),
   appBarTheme: const AppBarTheme(
+      iconTheme: IconThemeData(color: Colors.white),
+      elevation: 0, //Убираем тень у шапки
       backgroundColor: Color.fromARGB(250, 31, 31, 31), //Цвет шапки
       titleTextStyle: TextStyle(
         color: Colors.white,

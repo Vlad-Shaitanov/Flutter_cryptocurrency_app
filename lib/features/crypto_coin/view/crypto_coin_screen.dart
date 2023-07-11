@@ -15,6 +15,7 @@ class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
   void didChangeDependencies(){ // Метод жизненного цикла
     // Вытаскиваем аргументы, переданные при переходе по роуту "/coin"
     final args = ModalRoute.of(context)?.settings.arguments; // Может быть null, поэтому опц.последовательность
+    debugPrint(args as String);
     // Проверка на то, переданы ли аргументы и верен ли их формат
     assert(args != null && args is String, "You must provide args!");
     log('isOk');
