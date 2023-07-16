@@ -1,21 +1,14 @@
+import 'dart:async';
 import 'dart:developer';
+import 'package:crypto_coins_list/features/crypto_list/bloc/crypto_list_bloc.dart';
 import 'package:crypto_coins_list/repositories/crypto_coins/crypto_coins.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:crypto_coins_list/features/crypto_list/widgets/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 
 class CryptoListScreen extends StatefulWidget {
   const CryptoListScreen({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
 
   final String title;
 
@@ -24,50 +17,107 @@ class CryptoListScreen extends StatefulWidget {
 }
 
 class _CryptoListScreenState extends State<CryptoListScreen> {
-  List<CryptoCoin>? _cryptoCoinsList;
+
+  final _cryptoListBloc = CryptoListBloc(GetIt.I<AbstractCoinsRepository>());// Создали инстанс блока
 
   @override
   void initState() {
-    _loadCryptoCoins();
+    _cryptoListBloc.add(LoadCryptoList());// Передаем ивент
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      // backgroundColor: Colors.cyanAccent,
       appBar: AppBar(
-        // Here we take the value from the CryptoListScreen object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
         leading: const Icon(
           Icons.arrow_back,
           color: Colors.white,
         ),
       ),
-      body: _cryptoCoinsList == null
-          ? const Center(
-              child:
-                  CircularProgressIndicator()) // Если данных нет, выводим лоадер, иначе список
-          : ListView.separated(
-              padding: const EdgeInsets.only(top: 16),
-              itemCount:
-                  _cryptoCoinsList!.length, // Сколько будет элементов в списке
-              separatorBuilder: (context, index) => const Divider(),
-              itemBuilder: (context, i) {
-                final coin = _cryptoCoinsList![i];
+      body: RefreshIndicator(
+        /*Виджет обновления приложения. Тянем страницу вниз и
+        срабатывает метод на обновление инфы
+        */
+        onRefresh: () async {
+          // Индикатор будет показываться до тех пор, пока запрос не выполнится
+          final completer = Completer();// Позволяет отследить, завершен ли асинхронный запрос
+          _cryptoListBloc.add(LoadCryptoList(completer: completer));// Передаем ивент
+          return completer.future;
+        },
+        child: BlocBuilder<CryptoListBloc, CryptoListState>(
+          bloc: _cryptoListBloc,// Сообщаем билдеру по какому блоку билдить виджет
+          builder: (context, state) {
+            if(state is CryptoListLoaded){
+              return ListView.separated(
+                padding: const EdgeInsets.only(top: 16),
+                itemCount: state.coinsList!.length, // Сколько будет элементов в списке
+                separatorBuilder: (context, index) => const Divider(),
+                itemBuilder: (context, i) {
+                  final coin = state.coinsList[i];
 
-                return CryptoCoinTile(coin: coin);
-              },
-            ),
+                  return CryptoCoinTile(coin: coin);
+                },
+              );
+            }
+            if(state is CryptoListLoadingFailure){
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Something went wrong',
+                      style: theme.textTheme.headlineMedium,
+                    ),
+                    Text(
+                      'Please, try again later',
+                      style: theme.textTheme.labelSmall?.copyWith(fontSize: 16),
+                    ),
+                    const SizedBox(height: 30),
+                    TextButton(
+                      /* Если возникла ошибка при загрузке списка валют,
+                      то нажимаем кнопку и  запрос отправляется снова
+                      */
+                      onPressed: (){
+                        _cryptoListBloc.add(LoadCryptoList());
+                      },
+                      child: const Text("Try again"),
+                    )
+                  ],
+                ),
+              );
+            }
+            return const Center(child: CircularProgressIndicator()); // Если данных нет, выводим лоадер,
+          },
+        ),
+      )
+      // _cryptoCoinsList == null
+      //     ? const Center(
+      //         child:
+      //             CircularProgressIndicator()) // Если данных нет, выводим лоадер, иначе список
+      //     : ListView.separated(
+      //         padding: const EdgeInsets.only(top: 16),
+      //         itemCount:
+      //             _cryptoCoinsList!.length, // Сколько будет элементов в списке
+      //         separatorBuilder: (context, index) => const Divider(),
+      //         itemBuilder: (context, i) {
+      //           final coin = _cryptoCoinsList![i];
+      //
+      //           return CryptoCoinTile(coin: coin);
+      //         },
+      //       ),
     );
   }
-
-  // Приватная функция
-  Future<void> _loadCryptoCoins() async => {
-        // По нажатию на кнопку делаем запрос на валюты и записываем в приватную переменную
-        _cryptoCoinsList = await GetIt.I<AbstractCoinsRepository>().getCoinsList(),
-        // Обновляем стейт для отрисовки новых данных
-        setState(() {})
-      };
+  //
+  // // Приватная функция
+  // Future<void> _loadCryptoCoins() async => {
+  //       // По нажатию на кнопку делаем запрос на валюты и записываем в приватную переменную
+  //       _cryptoCoinsList = await GetIt.I<AbstractCoinsRepository>().getCoinsList(),
+  //       // Обновляем стейт для отрисовки новых данных
+  //       setState(() {})
+  //     };
 }
