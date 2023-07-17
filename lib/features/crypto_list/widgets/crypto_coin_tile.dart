@@ -22,7 +22,7 @@ class CryptoCoinTile extends StatelessWidget {
         // Коллбэк, вызываемый при нажатии на элемент списка
         // Навигатор принимает контекст и открывает нужный экран по роуту(Навигация)
         Navigator.of(context).pushNamed("/coin",
-          arguments: coin.name, // Передача аргументов в виджет, который находится на роуте
+          arguments: coin, // Передача аргументов в виджет, который находится на роуте
         );
       },
       title: Text(coin.name,

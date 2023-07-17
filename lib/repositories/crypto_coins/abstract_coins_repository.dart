@@ -1,4 +1,4 @@
-import 'package:crypto_coins_list/repositories/crypto_coins/models/crypto_coin.dart';
+import 'package:crypto_coins_list/repositories/crypto_coins/crypto_coins.dart';
 
 
 /*В Dart нет интерфейсов, поэтому в нем используется альтернаятива
@@ -12,4 +12,5 @@ abstract class AbstractCoinsRepository {
   // Что принимают методы и что возвращают
 
   Future<List<CryptoCoin>> getCoinsList();
+  Future<CryptoCoinDetail> getCoinDetails(String currencyCode);
 }

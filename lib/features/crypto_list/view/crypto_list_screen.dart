@@ -95,29 +95,6 @@ class _CryptoListScreenState extends State<CryptoListScreen> {
           },
         ),
       )
-      // _cryptoCoinsList == null
-      //     ? const Center(
-      //         child:
-      //             CircularProgressIndicator()) // Если данных нет, выводим лоадер, иначе список
-      //     : ListView.separated(
-      //         padding: const EdgeInsets.only(top: 16),
-      //         itemCount:
-      //             _cryptoCoinsList!.length, // Сколько будет элементов в списке
-      //         separatorBuilder: (context, index) => const Divider(),
-      //         itemBuilder: (context, i) {
-      //           final coin = _cryptoCoinsList![i];
-      //
-      //           return CryptoCoinTile(coin: coin);
-      //         },
-      //       ),
     );
   }
-  //
-  // // Приватная функция
-  // Future<void> _loadCryptoCoins() async => {
-  //       // По нажатию на кнопку делаем запрос на валюты и записываем в приватную переменную
-  //       _cryptoCoinsList = await GetIt.I<AbstractCoinsRepository>().getCoinsList(),
-  //       // Обновляем стейт для отрисовки новых данных
-  //       setState(() {})
-  //     };
 }
