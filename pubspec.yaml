@@ -12,11 +12,22 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
+  # Работа с свг
   flutter_svg: ^2.0.5
+  # Работа с запросами
   dio: ^5.2.1+1
+  # Инъекции зависимостей
   get_it: ^7.6.0
+  # Стейт-менеджер
   flutter_bloc: ^8.1.3
+  # Библиотека сравнения
   equatable: ^2.0.5
+  # Логгирование
+  talker_flutter: ^3.1.7
+  # Логгирование запросов в Dio
+  talker_dio_logger: ^2.2.1
+  # Логгирование в стейт-менеджере Bloc
+  talker_bloc_logger: ^2.1.0
 
 dev_dependencies:
   # Зависимости проекта для дев-режима
