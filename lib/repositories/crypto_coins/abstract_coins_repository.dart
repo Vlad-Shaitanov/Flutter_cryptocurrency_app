@@ -12,5 +12,5 @@ abstract class AbstractCoinsRepository {
   // Что принимают методы и что возвращают
 
   Future<List<CryptoCoin>> getCoinsList();
-  Future<CryptoCoinDetail> getCoinDetails(String currencyCode);
+  Future<CryptoCoin> getCoinDetails(String currencyCode);
 }

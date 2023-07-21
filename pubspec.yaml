@@ -30,12 +30,18 @@ dependencies:
   talker_bloc_logger: ^2.1.0
   # Интеграция Firebase
   firebase_core: ^2.15.0
+  # Определяет аннотации, используемые json_serializable для создания кода для сериализации и десериализации JSON
+  json_annotation: ^4.8.1
 
 dev_dependencies:
   # Зависимости проекта для дев-режима
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  # Генерация DTO моделей в проекте для json
+  json_serializable: ^6.6.0
+  # Пакет для обработки других пакетов, занимающихся генерацией кода
+  build_runner:
 
 flutter:
   # Все дополнительные зависимости и конфиги
