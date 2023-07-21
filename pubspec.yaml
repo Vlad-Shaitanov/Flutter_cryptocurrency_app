@@ -28,6 +28,8 @@ dependencies:
   talker_dio_logger: ^2.2.1
   # Логгирование в стейт-менеджере Bloc
   talker_bloc_logger: ^2.1.0
+  # Интеграция Firebase
+  firebase_core: ^2.15.0
 
 dev_dependencies:
   # Зависимости проекта для дев-режима
