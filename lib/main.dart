@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:crypto_coins_list/crypto_coins_list_app.dart';
 import 'package:crypto_coins_list/repositories/crypto_coins/crypto_coins.dart';
@@ -14,12 +15,21 @@ import 'package:talker_flutter/talker_flutter.dart';
 import 'firebase_options.dart';
 
 void main() async {
+  const cryptoCoinsBoxName = "crypto_coins_box";
   // Подключение Firebase
   WidgetsFlutterBinding.ensureInitialized();
 
   final talker = TalkerFlutter.init(); // Инициализация логгера
   GetIt.I.registerSingleton(talker); // Регистрация инстанса логгера
   GetIt.I<Talker>().debug('Talker started...');
+
+  // Инициализация БД hive
+  await Hive.initFlutter();
+  // Регистрация адаптеров hive
+  Hive.registerAdapter(CryptoCoinAdapter());
+  Hive.registerAdapter(CryptoCoinDetailAdapter());
+  // Инициализация бокса, в котором hive хранит данные
+  final cryptoCoinsBox = await Hive.openBox<CryptoCoin>(cryptoCoinsBoxName);
 
   final app = await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -49,7 +59,7 @@ void main() async {
 
   // Для работы с DependencyInjection
   GetIt.I.registerLazySingleton<AbstractCoinsRepository>(
-      () => CryptoCoinsRepository(dio: dio));
+      () => CryptoCoinsRepository(dio: dio, cryptoCoinsBox: cryptoCoinsBox));
   // GetIt регистрирует LazySingleton с типом AbstractCoinsRepository с реализацией CryptoCoinsRepository
   // LazySingleton - означает, что инстанс создастся при первом обращении к нему,а не сразу (экономия ресурсов)
 

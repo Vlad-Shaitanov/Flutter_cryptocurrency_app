@@ -32,6 +32,8 @@ dependencies:
   firebase_core: ^2.15.0
   # Определяет аннотации, используемые json_serializable для создания кода для сериализации и десериализации JSON
   json_annotation: ^4.8.1
+  # NoSQL база данных
+  hive_flutter: ^1.1.0
 
 dev_dependencies:
   # Зависимости проекта для дев-режима
@@ -40,6 +42,8 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   # Генерация DTO моделей в проекте для json
   json_serializable: ^6.6.0
+  # Генератор для БД hive
+  hive_generator: ^2.0.0
   # Пакет для обработки других пакетов, занимающихся генерацией кода
   build_runner:
 
