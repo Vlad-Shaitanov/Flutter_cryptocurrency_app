@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:auto_route/auto_route.dart';
 import 'package:crypto_coins_list/features/crypto_coin/bloc/crypto_coin_details_bloc.dart';
 import 'package:crypto_coins_list/features/crypto_coin/widgets/widgets.dart';
 import 'package:crypto_coins_list/repositories/crypto_coins/abstract_coins_repository.dart';
@@ -7,32 +8,45 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 
+@RoutePage() //Аннотация для навигации
 class CryptoCoinScreen extends StatefulWidget {
-  const CryptoCoinScreen({Key? key}) : super(key: key);
+  // const CryptoCoinScreen({Key? key, required this.coin}) : super(key: key);
+  const CryptoCoinScreen({
+    super.key,
+    required this.coin
+  });
+
+  final CryptoCoin coin;
 
   @override
   State<CryptoCoinScreen> createState() => _CryptoCoinScreenState();
 }
 
 class _CryptoCoinScreenState extends State<CryptoCoinScreen> {
-  CryptoCoin? coin;
+  // CryptoCoin? coin;
 
   final _coinDetailsBloc = CryptoCoinDetailsBloc(
     GetIt.I<AbstractCoinsRepository>(),
   );
 
   @override
-  void didChangeDependencies(){ // Метод жизненного цикла
-    // Вытаскиваем аргументы, переданные при переходе по роуту "/coin"
-    final args = ModalRoute.of(context)?.settings.arguments; // Может быть null, поэтому опц.последовательность
-
-    // Проверка на то, переданы ли аргументы и верен ли их формат
-    assert(args != null && args is CryptoCoin, 'You must provide String args');
-    coin = args as CryptoCoin;
-    _coinDetailsBloc.add(LoadCryptoCoinDetails(currencyCode: coin!.name));
-
-    super.didChangeDependencies();
+  void initState() {
+    _coinDetailsBloc.add(LoadCryptoCoinDetails(currencyCode: widget.coin.name));
+    super.initState();
   }
+
+  // @override
+  // void didChangeDependencies(){ // Метод жизненного цикла
+  //   // Вытаскиваем аргументы, переданные при переходе по роуту "/coin"
+  //   final args = ModalRoute.of(context)?.settings.arguments; // Может быть null, поэтому опц.последовательность
+  //
+  //   // Проверка на то, переданы ли аргументы и верен ли их формат
+  //   assert(args != null && args is CryptoCoin, 'You must provide String args');
+  //   coin = args as CryptoCoin;
+  //   _coinDetailsBloc.add(LoadCryptoCoinDetails(currencyCode: coin!.name));
+  //
+  //   super.didChangeDependencies();
+  // }
 
   @override
   Widget build(BuildContext context) {

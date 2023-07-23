@@ -1,4 +1,6 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:crypto_coins_list/repositories/crypto_coins/crypto_coins.dart';
+import 'package:crypto_coins_list/router/router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -22,9 +24,10 @@ class CryptoCoinTile extends StatelessWidget {
       onTap: () {
         // Коллбэк, вызываемый при нажатии на элемент списка
         // Навигатор принимает контекст и открывает нужный экран по роуту(Навигация)
-        Navigator.of(context).pushNamed("/coin",
-          arguments: coin, // Передача аргументов в виджет, который находится на роуте
-        );
+        // Navigator.of(context).pushNamed("/coin",
+        //   arguments: coin, // Передача аргументов в виджет, который находится на роуте
+        // );
+        AutoRouter.of(context).push(CryptoCoinRoute(coin: coin));
       },
       title: Text(coin.name,
         style: theme.textTheme.bodyMedium, // Используем стили из общей темы
